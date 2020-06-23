@@ -1,0 +1,88 @@
+﻿<Window x:Class="Laba6.ParamsDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Laba6.Utils"
+        mc:Ignorable="d"
+        Title="Enter Parameters" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterOwner">
+
+    <Window.Resources>
+        <Style TargetType="{x:Type TextBox}">
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="True">
+                    <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
+                    <Setter Property="Background" Value="Pink"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+
+        <ControlTemplate x:Key="ErrorTempl">
+            <StackPanel Orientation="Horizontal">
+                <Border BorderThickness="2" BorderBrush="Red">
+                    <AdornedElementPlaceholder></AdornedElementPlaceholder>
+                </Border>
+                <TextBlock Foreground="Red" FontSize="24">*</TextBlock>
+            </StackPanel>
+        </ControlTemplate>
+    </Window.Resources>
+    
+    <Grid Margin="15">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBox Grid.Row="1" Grid.Column="0" Name="tbxLowLimit" Text="a = "  FontSize="20" VerticalAlignment="Center"  TextAlignment="Right" FontFamily="Comic Sans MS" IsReadOnly="True" />
+        <TextBox Grid.Row="1"  Grid.Column="1" Name="tbxLowLimitValue"  FontSize="20" VerticalAlignment="Center" FontFamily="Comic Sans MS" >
+            <TextBox.Text>
+                <Binding Path="A" UpdateSourceTrigger="PropertyChanged" >
+                    <Binding.ValidationRules>
+                        <local:LowLimitRule/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
+        </TextBox>
+
+        <TextBox Grid.Row="2" Name="tbxUpLimit" Text="b = "  FontSize="20" VerticalAlignment="Center" TextAlignment="Right" FontFamily="Comic Sans MS" IsReadOnly="True"/>
+        <TextBox Grid.Row="2"  Grid.Column="1" Name="tbxUpLimitValue"  FontSize="20" VerticalAlignment="Center" FontFamily="Comic Sans MS">
+            <TextBox.Resources>
+                <local:BindingProxy x:Key="TargetProxy" Data="{Binding ElementName=tbxLowLimitValue, Path=Text}"/>
+            </TextBox.Resources>
+            <TextBox.Text>
+                <Binding Path="B" UpdateSourceTrigger="PropertyChanged" >
+                    <Binding.ValidationRules>
+                        <local:UpLimitRule>
+                            <local:Wrapper lowLimit="{Binding Data, Source={StaticResource TargetProxy}}"/>
+                        </local:UpLimitRule>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
+        </TextBox>
+
+        <TextBox Grid.Row="3" Name="tbxStep" Text="N = "  FontSize="20" VerticalAlignment="Center" TextAlignment="Right" FontFamily="Comic Sans MS" IsReadOnly="True"/>
+        <TextBox Grid.Row="3"  Grid.Column="1" Name="tbxStepValue"  FontSize="20" VerticalAlignment="Center" FontFamily="Comic Sans MS">
+            <TextBox.Text>
+                <Binding Path="N" UpdateSourceTrigger="PropertyChanged" >
+                    <Binding.ValidationRules>
+                        <local:LowLimitRule/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
+        </TextBox>
+
+        <WrapPanel Grid.Row="4" Grid.ColumnSpan="2"  Margin="0,15,0,0" >
+            <Button  IsDefault="True" Name="btnDialogOk" Click="btnDialogOk_Click" Width="60" Background="LightSeaGreen" FontFamily="Comic Sans MS" FontSize="16">_Ok</Button>
+            <Button IsCancel="True" Width="60" Background="LightSeaGreen" FontFamily="Comic Sans MS" FontSize="16" HorizontalAlignment="Right" Margin="16,0,0,0">_Cancel</Button>
+        </WrapPanel>
+    </Grid>
+        
+</Window>
